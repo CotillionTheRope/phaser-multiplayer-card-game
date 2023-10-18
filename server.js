@@ -26,6 +26,8 @@ io.on('connection', function (socket) {
   players[socket.id] = {
     inDeck: [],
     inHand: [],
+    bp: 0,
+    variables: 0,
     isPlayerA: false
   }
 
@@ -63,6 +65,20 @@ io.on('connection', function (socket) {
 
   socket.on('cardPlayed', function(cardName, socketId) {
     io.emit('cardPlayed', cardName, socketId);
+
+    if (cardName === 'ping') {
+      for(let [key, value] of Object.entries(players)) {
+        if (key === socketId) {
+          value.bp += 2;
+          value.variables++;
+        }
+        else {
+          value.bp -= 1;
+        }
+      }
+
+      io.emit('playerValuesChanged', players);
+    }
     io.emit('changeTurn');
   })
 });

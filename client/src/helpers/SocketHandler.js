@@ -16,7 +16,7 @@ export default class SocketHandler {
     scene.socket.on('changeGameState', (gameState) => {
       scene.GameHandler.changeGameState(gameState);
       if (gameState === 'Initializing') {
-        scene.DeckHandler.dealCard(1000, 860, 'cardBack', 'playerCard');
+        scene.DeckHandler.dealCard(1000, 860, 'cardBack', 'valueCard');
         scene.DeckHandler.dealCard(1000, 135, 'cardBack', 'opponentCard');
         scene.dealCards.setInteractive();
         scene.dealCards.setColor('#00ffff');
@@ -46,5 +46,19 @@ export default class SocketHandler {
         scene.dropZone.data.values.cards++;
       }
     });
+
+    scene.socket.on('playerValuesChanged', (players) => {
+      console.log(scene.playerBPValue);
+      for (const [key, value] of Object.entries(players)) {
+        if (key === scene.socket.id) {
+          scene.playerBPValue.setText(value.bp);
+          scene.playerVaraiblesValue.setText(value.variables);
+        }
+        else {
+          scene.opponentBPValue.setText(value.bp);
+          scene.opponentVaraiblesValue.setText(value.variables);
+        }
+      }
+    })
   }
 }
