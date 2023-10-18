@@ -6,6 +6,7 @@ const serveStatic = require('serve-static');
 const shuffle = require('shuffle-array');
 
 let players = {};
+let booleansPlayed = 0;
 let readyCheck = 0;
 let gameState = 'Initializing';
 
@@ -71,14 +72,24 @@ io.on('connection', function (socket) {
         if (key === socketId) {
           value.bp += 2;
           value.variables++;
-        }
-        else {
+        } else {
           value.bp -= 1;
         }
       }
 
       io.emit('playerValuesChanged', players);
+    } else if (cardName === 'boolean') {
+      if (booleansPlayed === 0) {
+        players[socketId].bp += 4;
+      } else {
+        players[socketId].bp -= 2;
+      }
+
+      booleansPlayed++;
+      players[socketId].variables++;
+      io.emit('playerValuesChanged', players);
     }
+
     io.emit('changeTurn');
   })
 });
