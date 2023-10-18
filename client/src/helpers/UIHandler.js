@@ -25,7 +25,17 @@ export default class UIHandler {
   }
 
   buildGameText() {
-    this.scene.dealCards = this.scene.add.text(960, 445, 'Deal Cards').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.opponentBP = this.scene.add.text(960, 400, 'Opponent BP: ').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.opponentBPValue = this.scene.add.text(1050, 400, '0').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.opponentVariables = this.scene.add.text(960, 420, 'Opponent Variables: ').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.opponentVaraiblesValue = this.scene.add.text(1090, 420, '0').setFontSize(14).setFontFamily('Trebuchet MS');
+
+    this.scene.dealCards = this.scene.add.text(960, 450, 'Deal Cards').setFontSize(14).setFontFamily('Trebuchet MS');
+
+    this.scene.playerBP = this.scene.add.text(960, 480, 'Player BP: ').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.playerBPValue = this.scene.add.text(1028, 480, '0').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.playerVariables = this.scene.add.text(960, 500, 'Player Variables: ').setFontSize(14).setFontFamily('Trebuchet MS');
+    this.scene.playerVaraiblesValue = this.scene.add.text(1068, 500, '0').setFontSize(14).setFontFamily('Trebuchet MS');
   }
 
   buildUI() {
