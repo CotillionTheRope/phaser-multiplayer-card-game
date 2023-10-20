@@ -1,17 +1,23 @@
 import io from 'socket.io-client';
 
 export default class SocketHandler {
-  constructor(scene) {
-    scene.socket = io('http://localhost:9742');
+  constructor() {
+    this.socket = io('http://localhost:9742');
 
-    scene.socket.on('connect', () => {
+    this.socket.on('connect', () => {
       console.log('Connected!');
-      scene.socket.emit('dealDeck', scene.socket.id);
     });
+  }
 
-    scene.socket.on('firstTurn', () => {
-      scene.GameHandler.changeTurn();
-    });
+  getSocketID() {
+    return this.socket.id;
+  }
+
+  gameSceneSocketSetup(scene) {
+
+    scene.socket = this.socket;
+
+    scene.socket.emit('dealDeck', scene.socket.id);
 
     scene.socket.on('changeGameState', (gameState) => {
       scene.GameHandler.changeGameState(gameState);
@@ -60,5 +66,24 @@ export default class SocketHandler {
         }
       }
     })
+  }
+
+  startSceneSocketSetup(scene) {
+    scene.socket = this.socket;
+
+    scene.socket.on('connected', (rooms) => {
+      scene.roomId = scene.socket.id;
+      if (rooms.length) {
+        for (let i in rooms) {
+          if (rooms[i].players.length < 2) {
+            scene.roomId = rooms[i].id;
+          }
+        }
+      }
+    });
+
+    scene.socket.on('roomJoined', (room) => {
+      scene.scene.start('Game', {socketHandler: scene.socketHandler, 'firstTurn': room.players.length < 2});
+    });
   }
 }

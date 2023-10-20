@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Game from './scenes/game.js';
+import Start from './scenes/start.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -9,6 +10,7 @@ const config = {
         height: 1000,
     },
     scene: [
+        Start,
         Game,
     ]
 };
