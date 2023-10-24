@@ -9,10 +9,6 @@ export default class SocketHandler {
     });
   }
 
-  getSocketID() {
-    return this.socket.id;
-  }
-
   gameSceneSocketSetup(scene) {
 
     scene.socket = this.socket;
@@ -48,24 +44,45 @@ export default class SocketHandler {
     scene.socket.on('cardPlayed', (cardName, socketId) => {
       if (socketId !== scene.socket.id) {
         scene.GameHandler.opponentHand.shift().destroy();
-        scene.DeckHandler.dealCard((scene.dropZone.x - 350) + (scene.dropZone.data.values.cards * 50), scene.dropZone.y, cardName, 'opponentCard');
+        const card = scene.DeckHandler.dealCard((scene.dropZone.x - 350) + (scene.dropZone.data.values.cards * 50), scene.dropZone.y, cardName, 'opponentCard');
         scene.dropZone.data.values.cards++;
+        scene.GameHandler.playedCards.push(card);
       }
     });
 
     scene.socket.on('playerValuesChanged', (players) => {
-      console.log(scene.playerBPValue);
+      console.log(players);
       for (const [key, value] of Object.entries(players)) {
         if (key === scene.socket.id) {
           scene.playerBPValue.setText(value.bp);
-          scene.playerVaraiblesValue.setText(value.variables);
+          scene.playerVariablesValue.setText(value.variables);
         }
         else {
           scene.opponentBPValue.setText(value.bp);
-          scene.opponentVaraiblesValue.setText(value.variables);
+          scene.opponentVariablesValue.setText(value.variables);
         }
       }
-    })
+    });
+
+    scene.socket.on('playerLeftRoom', () => {
+      scene.GameHandler.opponentHand = scene.GameHandler.opponentHand.filter(card => {
+        card.destroy();
+      });
+
+      scene.dropZone.data.values.cards = 0;
+
+      scene.GameHandler.playedCards = scene.GameHandler.playedCards.filter(card => {
+        card.destroy();
+      });
+
+      scene.GameHandler.playerHand = scene.GameHandler.playerHand.filter(card => {
+        card.destroy();
+      });
+
+      scene.GameHandler.isMyTurn = true;
+
+      scene.socket.emit('resetRoom', scene.socket.id);
+    });
   }
 
   startSceneSocketSetup(scene) {
@@ -80,6 +97,12 @@ export default class SocketHandler {
           }
         }
       }
+
+      scene.generateRooms(rooms);
+    });
+
+    scene.socket.on('roomsUpdate', (rooms) => {
+      scene.generateRooms(rooms);
     });
 
     scene.socket.on('roomJoined', (room) => {

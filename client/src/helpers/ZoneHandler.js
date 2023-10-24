@@ -3,26 +3,24 @@ export default class ZoneHandler {
     this.scene = scene;
   }
 
-  renderZone(x, y) {
-    let dropZone = this.scene.add.zone(x, y, 850, 230)
-      .setRectangleDropZone(850, 230);
-
-    dropZone.setData({
-      "cards": 0
-    });
+  renderZone(x, y, width, height) {
+    let dropZone = this.scene.add.zone(x, y, width, height)
+      .setRectangleDropZone(width, height);
 
     return dropZone;
   }
 
-  renderOutline(dropZone) {
+  renderOutline(dropZone, lineWidth, color) {
     let dropZoneOutline = this.scene.add.graphics();
 
-    dropZoneOutline.lineStyle(4, 0xff69b4);
+    dropZoneOutline.lineStyle(lineWidth, color);
     dropZoneOutline.strokeRect(
       dropZone.x - dropZone.input.hitArea.width / 2,
       dropZone.y - dropZone.input.hitArea.height / 2,
       dropZone.input.hitArea.width,
       dropZone.input.hitArea.height
     );
+
+    return dropZoneOutline;
   }
 }
